@@ -1,12 +1,6 @@
-requirements.txt
-Procfile
-*.py
-trends_proxy_v2.py
-matriz/trends_proxy_v2.py
-app.py
-pyproject.toml
-__pycache__/
-.git/
-.gitignore
-NODE_MODULES_PLACEHOLDER
+# Ignore everything except /public folder and package.json
+/*
+!/public
+!/package.json
+!/.vercelignore
 
