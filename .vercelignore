@@ -1,0 +1,9 @@
+trends_proxy_v2.py
+Procfile
+requirements.txt
+matriz/trends_proxy_v2.py
+__pycache__/
+*.pyc
+.git/
+.gitignore
+NODE_MODULES_PLACEHOLDER
