@@ -1,0 +1,9 @@
+{
+  "name": "lingua-viva",
+  "version": "1.0.0",
+  "description": "Virtual museum with real-time trending data visualization",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  }
+}
