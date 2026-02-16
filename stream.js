@@ -10,7 +10,7 @@ console.log("✅ stream.js carregado - iniciando carregamento de dados...");
 // ==============================================================================
 // Para desenvolvimento local: http://localhost:5000
 // Para produção (Render): https://sua-app-render.com (será actualizado durante deploy)
-const BACKEND_URL = 'http://localhost:5000';  // ALTERAR PARA RENDER URL EM PRODUÇÃO
+const BACKEND_URL = 'https://lingua-viva.onrender.com';  // Render Production URL
 console.log(`🔌 Backend URL configurado: ${BACKEND_URL}`);
 
 // ==============================================================================
