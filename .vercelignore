@@ -1,9 +1,12 @@
-trends_proxy_v2.py
-Procfile
 requirements.txt
+Procfile
+*.py
+trends_proxy_v2.py
 matriz/trends_proxy_v2.py
+app.py
+pyproject.toml
 __pycache__/
-*.pyc
 .git/
 .gitignore
 NODE_MODULES_PLACEHOLDER
+
