@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUXO SINTÁTICO // TRANSMUTAÇÃO</title>
+    <link rel="stylesheet" href="fluxo-style.css">
+</head>
+<body>
+
+    <div id="intro-fluxo">
+        <div id="manifesto-fluxo"></div>
+        <button id="activate-btn">[ ATIVAR_TRANSMUTAÇÃO ]</button>
+    </div>
+
+    <div id="manifesto-intro" class="manifesto-intro">
+        <button class="close-btn" onclick="closeManifesto()">✕</button>
+        <p id="manifesto-content"></p>
+    </div>
+
+    <div id="help-intro" class="help-intro">
+        <button class="close-btn" onclick="closeHelp()">✕</button>
+        <p id="help-content"></p>
+    </div>
+
+    <main id="pipeline-container" class="hidden">
+        
+        <nav id="sample-selector">
+            <span class="label">SELECIONAR_AMOSTRA:</span>
+            <button onclick="loadSample('camões_01')">LUSÍADAS_01</button>
+            <button onclick="loadSample('pessoa_01')">MENSAGEM_01</button>
+            <button onclick="loadSample('camões_02')">SONETO_LOVE</button>
+            <button onclick="loadSample('pessoa_02')">MENSAGEM_02</button>
+        </nav>
+
+        <div id="process-chamber">
+            <div id="author-tag">AGUARDANDO_INPUT...</div>
+            <div id="main-display">
+                <p id="text-display">Selecione uma amostra para iniciar.</p>
+            </div>
+            <canvas id="particle-layer"></canvas>
+        </div>
+    </main>
+
+    <div class="control-panel hidden">
+        <label for="mutation-slider">NÍVEL DE MUTAÇÃO SINTÁTICA</label>
+        <div class="slider-labels">
+            <span>ORIGINAL</span>
+            <span>STREET</span>
+            <span>ALGORITMO</span>
+            <span>MOBILE</span>
+        </div>
+        <input type="range" id="mutation-slider" min="0" max="3" step="1" value="0" title="Nível de mutação sintática: Original (0), Street (1), Algoritmo (2), Mobile (3)">
+        <div id="status-readout">STATUS: SISTEMA_STANDBY</div>
+    </div>
+
+    <footer class="fluxo-footer">
+        <button id="filter-btn" class="minimal-btn" style="visibility: hidden;">[ FILTRAR ]</button>
+        <button id="manifesto-btn" class="minimal-btn">[ MANIFESTO ]</button>
+        <button id="help-btn" class="minimal-btn">[ HELP ]</button>
+        <a href="index.html" class="back-link">[ VOLTAR À CONSTELAÇÃO ]</a>
+    </footer>
+
+    <script src="fluxo-engine.js"></script>
+</body>
+</html>

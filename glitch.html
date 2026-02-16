@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB_GLITCH_V1.0</title>
+    <link rel="stylesheet" href="glitch-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="noise-overlay"></div>
+
+    <div id="intro-glitch">
+        <div id="manifesto-glitch"></div>
+        <button id="accept-btn">[ ACEITAR_CORRUPÇÃO ]</button>
+    </div>
+
+    <div id="manifesto-intro" class="manifesto-intro">
+        <button class="close-btn" onclick="closeManifesto()">✕</button>
+        <p id="manifesto-content"></p>
+    </div>
+
+    <div id="help-intro" class="help-intro">
+        <button class="close-btn" onclick="closeHelp()">✕</button>
+        <p id="help-content"></p>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <header class="glitch-header">
+            <h1 data-text="LAB_GLITCH_V1.0">LAB_GLITCH_V1.0</h1>
+        <div class="terminal-container">
+            <div class="terminal-header">INPUT_PROCESSOR_STREAMS</div>
+            <textarea id="glitch-input" placeholder="DIGITE_AQUI_A_SUA_MENSAGEM..."></textarea>
+            <div id="output-display" class="corrupted-text">_AGUARDANDO_DADOS_</div>
+            <div id="system-diagnosis"></div>
+            <button id="deconstruct-btn">[ DESCONSTRUIR ]</button>
+        </div>
+    </section>
+
+    <section class="fossil-gallery">
+        <h2 class="section-title">ARQUIVO_DE_ERROS</h2>
+        <div class="fossil-grid">
+            <div class="fossil-card" data-desc="Tradução Automática - 2005">
+                <p>"Frango ao molho de pArdas" (Pardas Sauce Chicken)</p>
+                <span class="decipher-hint">Glitch de Tradução Primitiva</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Dialeto SMS - Era 3310">
+                <p>"t x mmt" (Tenho saudades tuas muito)</p>
+                <span class="decipher-hint">Economia de Caracteres Pré-Smartphone</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Erro de Codificação - UTF-8">
+                <p>Aten&Atilde;&sect;&Atilde;&pound;o ao Usu&Atilde;&iexcl;rio</p>
+                <span class="decipher-hint">Colisão de Protocolos de Texto</span>
+            </div>
+            <div class="fossil-card" data-desc="Abreviatura extrema para poupar caracteres (160 limite).">
+                <p>"Xau, t x mmt! bjs fofuxos"</p>
+                <span class="decipher-hint">Era dos Tijolos (Nokia 3310)</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Tradução literal de 'Prego no Pão' (Steak in Bread).">
+                <p>"Nail in the Bread"</p>
+                <span class="decipher-hint">Glitch Turístico - Lisboa 2010</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Uso do 'W' para substituir o 'V' ou 'U' (Estética Emo/Scene).">
+                <p>"Aww que fofix, xw mt!"</p>
+                <span class="decipher-hint">Arqueologia das salas de Chat</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Configuração de Ações (Entidades HTML)">
+                <p>Configura&amp;ccedil;&amp;atilde;o de A&amp;ccedil;&amp;otilde;es</p>
+                <span class="decipher-hint">Erro de Base de Dados</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Corrupção do termo 'Loot' ou 'Noob' adaptada ao PT.">
+                <p>"Deixa de ser n00b, ganda l00t!"</p>
+                <span class="decipher-hint">Cultura Gamer - Lan Houses</span>
+            </div>
+            <div class="fossil-card" data-desc="Leetspeak: Portugal sempre no topo">
+                <p>"P0rtug4l s3mpr3 n0 t0p0"</p>
+                <span class="decipher-hint">Identidade e Criptografia Gamer</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Coração de Camões (Erro de Encoding)">
+                <p>"Aten§£o: Coras£o de Cames"</p>
+                <span class="decipher-hint">Fragilidade dos acentos em sistemas UTF-8</span>
+            </div>
+            <div class="fossil-card" data-desc="Código Numérico de Pager: 121 + 07734.">
+                <p>"121_07734 (HELLO_ESTOU_AQUI)"</p>
+                <span class="decipher-hint">Protocolo Beep/Pager (Anos 90)</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Uso de caracteres especiais para decorar nomes no MSN Messenger.">
+                <p>"(.•ˆ•. m4r14 .•ˆ•.) - [Ocupada]"</p>
+                <span class="decipher-hint">Identidade Visual MSN Messenger</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Interferência do algoritmo na intenção humana (Duck vs F***).">
+                <p>"Que Duck de dia! Quero ir para casa."</p>
+                <span class="decipher-hint">Ditadura do Autocorrect Moderno</span>
+            </div>
+
+            <div class="fossil-card" data-desc="Desenhos feitos com caracteres simples em fóruns e IRC.">
+                <p>" <( " )> - O Pinguim diz Olá "</p>
+                <span class="decipher-hint">Arte Primitiva de Caracteres</span>
+            </div>
+
+            <div class="fossil-card" data-desc="O clássico truque para fechar janelas de utilizadores inexperientes.">
+                <p>"Queres moedas grátis? Carrega Alt+F4"</p>
+                <span class="decipher-hint">Engenharia Social em Salas de Chat</span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="glitch-footer">
+        <button id="filter-btn" class="minimal-btn" style="visibility: hidden;">[ FILTRAR ]</button>
+        <button id="manifesto-btn" class="minimal-btn">[ MANIFESTO ]</button>
+        <button id="help-btn" class="minimal-btn">[ HELP ]</button>
+        <a href="index.html" class="back-link">[ VOLTAR À CONSTELAÇÃO ]</a>
+    </footer>
+    </div>
+
+    <script src="glitch-engine.js"></script>
+</body>
+</html>
