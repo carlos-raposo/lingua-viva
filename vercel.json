@@ -1,18 +1,6 @@
 {
   "buildCommand": "echo 'Static site'",
   "outputDirectory": ".",
-  "framework": "vanilla",
-  "static": {
-    "include": [
-      "*.html",
-      "*.css",
-      "*.js",
-      "matriz/**",
-      "arquivo/**",
-      "fluxo/**",
-      "glitch/**"
-    ]
-  },
   "rewrites": [
     {
       "source": "/:path*",
