@@ -1,6 +1,0 @@
-# Ignore everything except /public folder and package.json
-/*
-!/public
-!/package.json
-!/.vercelignore
-
