@@ -6,6 +6,14 @@
 console.log("✅ stream.js carregado - iniciando carregamento de dados...");
 
 // ==============================================================================
+// CONFIGURAÇÃO DE BACKEND
+// ==============================================================================
+// Para desenvolvimento local: http://localhost:5000
+// Para produção (Render): https://sua-app-render.com (será actualizado durante deploy)
+const BACKEND_URL = 'http://localhost:5000';  // ALTERAR PARA RENDER URL EM PRODUÇÃO
+console.log(`🔌 Backend URL configurado: ${BACKEND_URL}`);
+
+// ==============================================================================
 // DADOS MOCKADOS (FALLBACK)
 // ==============================================================================
 const mockData = [
@@ -75,9 +83,9 @@ async function fetchGoogleTrendsByRegion(geoCode = 'PT', regionName = 'Portugal'
         console.log(`🔄 Fetching Google Trends (${regionName}/${geoCode})...`);
         
         // Estratégia 1: Backend Python local (MELHOR - sem CORS issues)
-        console.log(`📡 Tentando 1/3: Backend Python local (http://localhost:5000) - ${geoCode}...`);
+        console.log(`📡 Tentando 1/3: Backend Python (${BACKEND_URL}) - ${geoCode}...`);
         try {
-            const response = await fetch(`http://localhost:5000/trends?geo=${geoCode}`, {
+            const response = await fetch(`${BACKEND_URL}/trends?geo=${geoCode}`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
             });
