@@ -321,6 +321,61 @@ async function fetchBlueskyTrending() {
 }
 
 // ==============================================================================
+// PROVEDOR 3: NEOLOGISMOS EM PORTUGUÊS (Bluesky)
+// ==============================================================================
+async function fetchBlueskyNeologismos() {
+    try {
+        console.log("📚 Fetching Neologismos em Português...");
+        
+        const response = await fetch(
+            `${BACKEND_URL}/bluesky/neologismos`,
+            {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            }
+        );
+        
+        console.log(`   Status: ${response.status}`);
+        
+        if (!response.ok) {
+            console.log(`   ❌ Neologismos retornou ${response.status}`);
+            return null;
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success || !data.data || data.data.length === 0) {
+            console.log("   ❌ Nenhum neologismo encontrado");
+            return null;
+        }
+        
+        // Parser para neologismos
+        const neologismosArray = data.data.map(item => ({
+            termo: item.termo,
+            origem: "PORTUGUÊS MODERNO",
+            status: "Neologismo",
+            tendencia: "Emergente",
+            def: `(Neologismo) ${item.context || item.def || 'Termo novo em português'}`,
+            traffic: "+Unknown",
+            pubDate: item.pubDate || new Date().toISOString(),
+            source: "bluesky_neologismos",
+            idioma: item.idioma || "PT",
+            strategy: "Bluesky Linguistic Search"
+        }));
+        
+        if (neologismosArray.length > 0) {
+            console.log(`✅ Neologismos: ${neologismosArray.length} termos encontrados!`);
+        }
+        
+        return neologismosArray;
+    
+    } catch (error) {
+        console.error("   ❌ Erro ao buscar neologismos:", error);
+        return null;
+    }
+}
+
+// ==============================================================================
 // PLACEHOLDERS PARA FUTURAS EXPANSÕES
 // ==============================================================================
 async function fetchWikipediaTop() {
@@ -461,6 +516,14 @@ async function fetchAllSources() {
         if (blueskyResult && blueskyResult.length > 0) {
             console.log(`   ✅ Bluesky: ${blueskyResult.length} termos`);
             allData.push(...blueskyResult);
+        }
+        
+        // Carregar Neologismos em Português
+        console.log("\n📚 Neologismos em Português...");
+        const neologismosResult = await fetchBlueskyNeologismos();
+        if (neologismosResult && neologismosResult.length > 0) {
+            console.log(`   ✅ Neologismos: ${neologismosResult.length} termos`);
+            allData.push(...neologismosResult);
         }
         
         console.log(`\n✨ TOTAL COMBINADO: ${allData.length} termos de todas as fontes!`);
