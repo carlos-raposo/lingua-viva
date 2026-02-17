@@ -1,0 +1,8 @@
+trends_proxy_v2.py
+requirements.txt
+Procfile
+*.py
+__pycache__/
+.git/
+.gitignore
+node_modules/
