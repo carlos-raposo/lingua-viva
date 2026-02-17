@@ -97,8 +97,28 @@ class WordParticle {
         this.fontSize = 10 + Math.random() * 25;
         this.opacity = 0.1 + Math.random() * 0.8;
     }
+    getColorBySource() {
+        // Cores baseado na origem dos dados
+        const source = this.data.source || 'fallback';
+        const origem = this.data.origem || '';
+        
+        if (source === 'bluesky') {
+            // Bluesky = Magenta/Rosa
+            return `rgba(255, 0, 255, ${this.opacity})`;
+        } else if (source === 'google_trends') {
+            // Google Trends = Ciano (original)
+            return `rgba(0, 243, 255, ${this.opacity})`;
+        } else if (source === 'fallback') {
+            // Fallback/Mock = Verde
+            return `rgba(0, 255, 100, ${this.opacity})`;
+        } else {
+            // Default = Amarelo
+            return `rgba(255, 255, 0, ${this.opacity})`;
+        }
+    }
+    
     draw() {
-        ctx.fillStyle = `rgba(0, 243, 255, ${this.opacity})`;
+        ctx.fillStyle = this.getColorBySource();
         ctx.font = `${this.fontSize}px 'Space Mono', monospace`;
         ctx.fillText(this.data.termo.toUpperCase(), this.x, this.y);
     }
@@ -279,6 +299,21 @@ function showPopup(data, x, y) {
     document.getElementById('popup-origin').innerText = data.origem;
     document.getElementById('popup-status').innerText = data.status;
     document.getElementById('popup-trend').innerText = data.tendencia;
+    
+    // Mostrar source com cor apropriada
+    const sourceEl = document.getElementById('popup-source');
+    const source = data.source || 'fallback';
+    
+    if (source === 'bluesky') {
+        sourceEl.innerText = '🔷 BLUESKY';
+        sourceEl.style.color = '#ff00ff';  // Magenta
+    } else if (source === 'google_trends') {
+        sourceEl.innerText = '📈 GOOGLE TRENDS';
+        sourceEl.style.color = '#00f3ff';  // Ciano
+    } else {
+        sourceEl.innerText = '💾 FALLBACK';
+        sourceEl.style.color = '#00ff64';  // Verde
+    }
 }
 
 window.closePopup = () => { frozen = false; popup.style.display = 'none'; };
