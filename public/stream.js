@@ -32,9 +32,13 @@ const mockData = [
     { termo: "Corpo Perfeito Challenge", origem: "TikTok", status: "Viral", tendencia: "Explosiva", def: "(Trend) Desafio de dança que envolve movimento específico." },
     { termo: "Lip Sync Battle", origem: "TikTok", status: "Trend", tendencia: "Alta", def: "(Formato) Sincronização de lábios com músicas." },
     { termo: "Sound Clone", origem: "TikTok", status: "Emergente", tendencia: "Crescente", def: "(Inovação) Criação de vozes clonadas em áudio." },
-    { termo: "Duet Reaction", origem: "TikTok", status: "Social", tendencia: "Média", def: "(Interação) Reação lado a lado com outro criador." },
-    
-    // Fallback/Geral
+    { termo: "Duet Reaction", origem: "TikTok", status: "Social", tendencia: "Média", def: "(Interação) Reação lado a lado com outro criador." }
+];
+
+// ==============================================================================
+// TERMOS DE FALLBACK (RESERVADOS PARA TRATAMENTO DE ERROS FUTURO)
+// ==============================================================================
+const fallbackData = [
     { termo: "Desdigitalizar", origem: "Fallback", status: "Tendência 2026", tendencia: "Crescente", def: "(Oposição) Desconectar deliberadamente da tecnologia." },
     { termo: "Bué", origem: "Fallback", status: "Estabilizado", tendencia: "Estável", def: "(Gíria PT) Expressão que significa muito." },
     { termo: "Cringe", origem: "Fallback", status: "Geracional", tendencia: "Alta", def: "(Sentimento) Vergonha alheia perante algo constrangedor." },
@@ -72,9 +76,11 @@ function calculateStreamSize(dataArray) {
 // ==============================================================================
 if (typeof window !== 'undefined') {
     window.mockData = mockData;
+    window.fallbackData = fallbackData;
     window.fetchAllSources = fetchAllSources;
     window.calculateStreamSize = calculateStreamSize;
-    console.log(`✅ ${mockData.length} termos de dados simulados disponíveis`);
+    console.log(`✅ ${mockData.length} termos de dados reais simulados`);
+    console.log(`⚠️  ${fallbackData.length} termos de fallback reservados`);
 }
 
 console.log("✅ stream.js pronto - OFFLINE SEM BACKEND");
