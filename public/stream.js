@@ -28,6 +28,12 @@ const mockData = [
     { termo: "Aesthetic Vibe", origem: "Instagram", status: "Social", tendencia: "Média", def: "(Estilo) Compartilhamento de estilos visuais harmoniosos." },
     { termo: "Story Time", origem: "Instagram", status: "Comum", tendencia: "Estável", def: "(Narrativa) Compartilhamento de histórias pessoais." },
     
+    // Bluesky
+    { termo: "Skeet Thread", origem: "Bluesky", status: "Nativo", tendencia: "Média", def: "(Formato) Conversa encadeada de posts curtos no Bluesky." },
+    { termo: "Fediverso Aberto", origem: "Bluesky", status: "Conceito", tendencia: "Crescente", def: "(Arquitetura) Rede descentralizada de servidores interconectados." },
+    { termo: "Labeler Personalizado", origem: "Bluesky", status: "Feature", tendencia: "Emergente", def: "(Moderação) Sistema de tags personalizadas para filtrar conteúdo." },
+    { termo: "AT Protocol", origem: "Bluesky", status: "Técnico", tendencia: "Alta", def: "(Protocolo) Sistema descentralizado de autenticação e dados." },
+    
     // TikTok
     { termo: "Corpo Perfeito Challenge", origem: "TikTok", status: "Viral", tendencia: "Explosiva", def: "(Trend) Desafio de dança que envolve movimento específico." },
     { termo: "Lip Sync Battle", origem: "TikTok", status: "Trend", tendencia: "Alta", def: "(Formato) Sincronização de lábios com músicas." },
