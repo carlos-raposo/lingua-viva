@@ -82,7 +82,7 @@ class WordParticle {
         // Aceder ao mockData via window (definido em stream.js)
         const fallbackDB = window.mockData || mockData || [];
         const dbToUse = isDataLoaded && wordsDB.length > 0 ? wordsDB : fallbackDB;
-        const filteredDB = dbToUse.filter(item => currentFilter === 'TODAS' || item.origem.toUpperCase().includes(currentFilter));
+        const filteredDB = dbToUse.filter(item => currentFilter === 'TODAS' || (item.regiao && item.regiao.toUpperCase() === currentFilter));
         const source = filteredDB.length > 0 ? filteredDB : dbToUse;
         
         if (source.length === 0) {
@@ -109,13 +109,13 @@ class WordParticle {
             return `rgba(29, 155, 240, ${this.opacity})`;
         } else if (origem.includes('reddit')) {
             // Reddit = Laranja
-            return `rgba(255, 69, 0, ${this.opacity})`;
+            return `rgba(217, 160, 27, ${this.opacity})`;
         } else if (origem.includes('instagram')) {
             // Instagram = Rosa/Magenta
             return `rgba(229, 45, 168, ${this.opacity})`;
         } else if (origem.includes('tiktok')) {
             // TikTok = Ciano/Rosa
-            return `rgba(0, 245, 212, ${this.opacity})`;
+            return `rgba(80, 216, 67, ${this.opacity})`;
         } else if (origem.includes('bluesky')) {
             // Bluesky = Roxo/Magenta
             return `rgba(255, 0, 255, ${this.opacity})`;
@@ -305,6 +305,7 @@ function showPopup(data, x, y) {
     document.getElementById('popup-term').innerText = data.termo.toUpperCase();
     document.getElementById('popup-def').innerText = data.def;
     document.getElementById('popup-origin').innerText = data.origem;
+    document.getElementById('popup-regiao').innerText = data.regiao || '---';
     document.getElementById('popup-status').innerText = data.status;
     document.getElementById('popup-trend').innerText = data.tendencia;
     
@@ -320,13 +321,13 @@ function showPopup(data, x, y) {
         sourceEl.style.color = '#1d9bf0';  // Azul X
     } else if (origem.includes('reddit')) {
         sourceEl.innerText = '🔴 REDDIT';
-        sourceEl.style.color = '#ff4500';  // Laranja Reddit
+        sourceEl.style.color = '#d9a01b';  // Laranja Reddit
     } else if (origem.includes('instagram')) {
         sourceEl.innerText = '📷 INSTAGRAM';
         sourceEl.style.color = '#e52d8b';  // Rosa Instagram
     } else if (origem.includes('tiktok')) {
         sourceEl.innerText = '♪ TIKTOK';
-        sourceEl.style.color = '#00f5d4';  // Ciano TikTok
+        sourceEl.style.color = 'rgb(80, 216, 67)';  // Verde TikTok
     } else if (origem.includes('bluesky')) {
         sourceEl.innerText = '🔷 BLUESKY';
         sourceEl.style.color = '#1185fe';  // Azul Bluesky
