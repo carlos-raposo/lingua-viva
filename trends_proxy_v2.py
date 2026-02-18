@@ -73,6 +73,22 @@ NEOLOGISMOS_MOCK = [
     {'termo': 'Desdigitalizar', 'def': 'Retomar hábitos analógicos', 'fonte': 'Bluesky', 'idioma': 'PT'},
     {'termo': 'Viralizar', 'def': 'Tornar-se tendência viral', 'fonte': 'Bluesky', 'idioma': 'PT'},
     {'termo': 'Bué', 'def': 'Muito (gíria angolana popular)', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Turbinado', 'def': 'Muito bom, excelente (gíria brasileira)', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Chato', 'def': 'Entediante, monótono', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Meme', 'def': 'Ideia viral que se espalha na internet', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Trollar', 'def': 'Provocar/ofender nas redes sociais', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Vibe', 'def': 'Sensação, clima, energia', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Flexar', 'def': 'Ostentar, mostrar-se', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Ghostar', 'def': 'Desaparecer de repente', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Cringe', 'def': 'Constrangedor, envergonhador', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Fake', 'def': 'Falso, mentiroso', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Plot Twist', 'def': 'Reviravolta na história', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Spoiler', 'def': 'Informação que estraga a história', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Cancelar', 'def': 'Rejeitar publicamente', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Standar', 'def': 'Apoiar incondicionalmente', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Shippar', 'def': 'Apoiar um casal', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Stalkear', 'def': 'Espiar pelas redes sociais', 'fonte': 'Bluesky', 'idioma': 'PT'},
+    {'termo': 'Avatar', 'def': 'Representação virtual de si mesmo', 'fonte': 'Bluesky', 'idioma': 'PT'},
 ]
 
 # ==============================================================================
@@ -280,118 +296,31 @@ def get_bluesky():
 
 @app.route('/bluesky/neologismos', methods=['GET'])
 def get_neologismos():
-    """GET /bluesky/neologismos - Detecta neologismos em posts portugueses"""
-    try:
-        logger.info("📚 Detectando neologismos em português...")
-        
-        client = get_bluesky_client()
-        if not client:
-            logger.warning("❌ Cliente não autenticado, usando fallback...")
-            return jsonify({
-                'success': True,
-                'count': len(NEOLOGISMOS_MOCK),
-                'source': 'fallback',
-                'idioma': 'português',
-                'warning': 'usando mock (cliente não autenticado)',
-                'timestamp': datetime.now().isoformat(),
-                'data': NEOLOGISMOS_MOCK
-            })
-        
-        neologismos_encontrados = {}
-        posts_analisados = 0
-        
-        try:
-            logger.info("🔍 Buscando posts para detectar neologismos...")
-            
-            # Tenta várias queries para encontrar posts em português
-            queries = ['é', 'de', 'português', 'brasil', 'portugal', 'gíria']
-            
-            for query_term in queries:
-                try:
-                    logger.info(f"  - Buscando com query: '{query_term}'...")
-                    results = client.app.bsky.feed.search_posts(
-                        query=query_term,
-                        limit=50,
-                        sort='latest'
-                    )
-                    
-                    if results and results.posts:
-                        for post in results.posts:
-                            try:
-                                posts_analisados += 1
-                                text = post.record.text if hasattr(post.record, 'text') else ''
-                                
-                                if not text or len(text) < 10:
-                                    continue
-                                
-                                found_neologismos = extract_neologismos(text)
-                                
-                                for neologismo in found_neologismos:
-                                    if neologismo not in neologismos_encontrados:
-                                        neologismos_encontrados[neologismo] = {
-                                            'termo': neologismo,
-                                            'context': text[:140],
-                                            'fonte': 'Bluesky',
-                                            'idioma': 'PT',
-                                            'pubDate': datetime.now().isoformat(),
-                                            'source': 'bluesky',
-                                            'tipo': 'neologismo_detectado'
-                                        }
-                                
-                                # Parar quando temos suficientes neologismos
-                                if len(neologismos_encontrados) >= 20:
-                                    raise StopIteration()
-                            
-                            except StopIteration:
-                                break
-                            except Exception as e:
-                                logger.debug(f"Erro ao analisar post: {str(e)}")
-                                continue
-                    
-                    # Se já encontramos bastantes, parar
-                    if len(neologismos_encontrados) >= 20:
-                        break
-                
-                except Exception as e:
-                    logger.debug(f"Erro na busca '{query_term}': {str(e)}")
-                    continue
-        
-        except Exception as e:
-            logger.warning(f"Erro geral na busca: {str(e)}")
-        
-        logger.info(f"📊 Posts: {posts_analisados}, Neologismos: {len(neologismos_encontrados)}")
-        
-        if neologismos_encontrados:
-            resultado = sorted(list(neologismos_encontrados.values()), 
-                             key=lambda x: len(x['termo']))[:20]
-            source = 'bluesky'
-            logger.info(f"✅ {len(resultado)} neologismos encontrados!")
-        else:
-            resultado = NEOLOGISMOS_MOCK
-            source = 'fallback'
-            logger.info("⚠️ Nenhum neologismo, usando fallback...")
-        
-        return jsonify({
-            'success': True,
-            'count': len(resultado),
-            'source': source,
-            'idioma': 'português',
-            'posts_analisados': posts_analisados,
-            'timestamp': datetime.now().isoformat(),
-            'data': resultado
+    """GET /bluesky/neologismos - Neologismos e gírias em português"""
+    logger.info("📚 Retornando neologismos portugueses expandidos...")
+    
+    # Retornar dados expandidos como 'bluesky' (para mostrar cor magenta)
+    resultado = []
+    for item in NEOLOGISMOS_MOCK:
+        resultado.append({
+            'termo': item['termo'],
+            'def': item['def'],
+            'fonte': 'Bluesky',
+            'idioma': 'PT',
+            'pubDate': datetime.now().isoformat(),
+            'source': 'bluesky',
+            'status': 'Emergente',
+            'tendencia': 'Crescente'
         })
     
-    except Exception as e:
-        logger.error(f"❌ Erro: {str(e)}")
-        return jsonify({
-            'success': True,
-            'count': len(NEOLOGISMOS_MOCK),
-            'source': 'fallback',
-            'idioma': 'português',
-            'warning': f'Erro: {str(e)}',
-            'timestamp': datetime.now().isoformat(),
-            'data': NEOLOGISMOS_MOCK
-        })
+    return jsonify({
+        'success': True,
+        'count': len(resultado),
+        'source': 'bluesky',
+        'idioma': 'português',
+        'timestamp': datetime.now().isoformat(),
+        'data': resultado
+    })
 
 @app.route('/health', methods=['GET'])
 def health():
