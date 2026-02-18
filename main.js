@@ -83,7 +83,7 @@ function setupUniverse() {
         if (btn.getAttribute('data-id') === 'glitch') {
             btn.addEventListener('click', () => {
                 sessionStorage.setItem('skipManifesto', 'true');
-                window.location.href = 'glitch.html';
+                window.location.href = 'public/glitch.html';
             });
         }
 
@@ -91,7 +91,7 @@ function setupUniverse() {
         if (btn.getAttribute('data-id') === 'matriz') {
             btn.addEventListener('click', () => {
                 sessionStorage.setItem('skipManifesto', 'true');
-                window.location.href = 'matriz.html';
+                window.location.href = 'public/matriz.html';
             });
         }
 
@@ -99,7 +99,7 @@ function setupUniverse() {
         if (btn.getAttribute('data-id') === 'arquivo') {
             btn.addEventListener('click', () => {
                 sessionStorage.setItem('skipManifesto', 'true');
-                window.location.href = 'arquivo.html';
+                window.location.href = 'public/arquivo.html';
             });
         }
 
@@ -107,7 +107,7 @@ function setupUniverse() {
         if (btn.getAttribute('data-id') === 'fluxo') {
             btn.addEventListener('click', () => {
                 sessionStorage.setItem('skipManifesto', 'true');
-                window.location.href = 'fluxo.html';
+                window.location.href = 'public/fluxo.html';
             });
         }
     });
