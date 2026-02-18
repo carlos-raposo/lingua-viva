@@ -127,10 +127,12 @@ def is_neologismo(word):
     return False
 
 def extract_neologismos(text):
-    """Extrai neologismos de um texto"""
-    text_clean = re.sub(r'http\S+|www\S+|@\w+', '', text)
+    """Extrai palavras únicas de um texto (sem filtrar)"""
+    text_clean = re.sub(r'http\S+|www\S+|@\w+|#\w+', '', text)
+    # Extrair todas as palavras (maiúsculas ou minúsculas)
     words = re.findall(r'\b[a-záéíóúâêãõçA-Z][a-záéíóúâêãõçA-Z]*\b', text_clean)
-    return {w for w in words if is_neologismo(w)}
+    # Filtrar apenas palavras com 3+ caracteres
+    return {w for w in words if len(w) >= 3}
 
 # ==============================================================================
 # ENDPOINTS
