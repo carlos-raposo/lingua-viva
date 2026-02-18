@@ -98,22 +98,30 @@ class WordParticle {
         this.opacity = 0.1 + Math.random() * 0.8;
     }
     getColorBySource() {
-        // Cores baseado na origem dos dados
-        const source = this.data.source || 'fallback';
-        const origem = this.data.origem || '';
+        // Cores por origem/fonte
+        const origem = (this.data.origem || 'Fallback').toLowerCase();
         
-        if (source === 'bluesky') {
-            // Bluesky = Magenta/Rosa
-            return `rgba(255, 0, 255, ${this.opacity})`;
-        } else if (source === 'google_trends') {
-            // Google Trends = Ciano (original)
+        if (origem.includes('google')) {
+            // Google Trends = Ciano
             return `rgba(0, 243, 255, ${this.opacity})`;
-        } else if (source === 'fallback') {
-            // Fallback/Mock = Verde
-            return `rgba(0, 255, 100, ${this.opacity})`;
+        } else if (origem.includes('x') || origem.includes('twitter')) {
+            // X/Twitter = Azul
+            return `rgba(29, 155, 240, ${this.opacity})`;
+        } else if (origem.includes('reddit')) {
+            // Reddit = Laranja
+            return `rgba(255, 69, 0, ${this.opacity})`;
+        } else if (origem.includes('instagram')) {
+            // Instagram = Rosa/Magenta
+            return `rgba(229, 45, 168, ${this.opacity})`;
+        } else if (origem.includes('tiktok')) {
+            // TikTok = Ciano/Rosa
+            return `rgba(0, 245, 212, ${this.opacity})`;
+        } else if (origem.includes('bluesky')) {
+            // Bluesky = Roxo/Magenta
+            return `rgba(255, 0, 255, ${this.opacity})`;
         } else {
-            // Default = Amarelo
-            return `rgba(255, 255, 0, ${this.opacity})`;
+            // Fallback/Outras = Verde
+            return `rgba(0, 255, 100, ${this.opacity})`;
         }
     }
     
@@ -302,16 +310,28 @@ function showPopup(data, x, y) {
     
     // Mostrar source com cor apropriada
     const sourceEl = document.getElementById('popup-source');
-    const source = data.source || 'fallback';
+    const origem = (data.origem || 'Fallback').toLowerCase();
     
-    if (source === 'bluesky') {
-        sourceEl.innerText = '🔷 BLUESKY';
-        sourceEl.style.color = '#ff00ff';  // Magenta
-    } else if (source === 'google_trends') {
+    if (origem.includes('google')) {
         sourceEl.innerText = '📈 GOOGLE TRENDS';
         sourceEl.style.color = '#00f3ff';  // Ciano
+    } else if (origem.includes('x') || origem.includes('twitter')) {
+        sourceEl.innerText = '𝕏 X / TWITTER';
+        sourceEl.style.color = '#1d9bf0';  // Azul X
+    } else if (origem.includes('reddit')) {
+        sourceEl.innerText = '🔴 REDDIT';
+        sourceEl.style.color = '#ff4500';  // Laranja Reddit
+    } else if (origem.includes('instagram')) {
+        sourceEl.innerText = '📷 INSTAGRAM';
+        sourceEl.style.color = '#e52d8b';  // Rosa Instagram
+    } else if (origem.includes('tiktok')) {
+        sourceEl.innerText = '♪ TIKTOK';
+        sourceEl.style.color = '#00f5d4';  // Ciano TikTok
+    } else if (origem.includes('bluesky')) {
+        sourceEl.innerText = '🔷 BLUESKY';
+        sourceEl.style.color = '#1185fe';  // Azul Bluesky
     } else {
-        sourceEl.innerText = '💾 FALLBACK';
+        sourceEl.innerText = '💾 OFFLINE';
         sourceEl.style.color = '#00ff64';  // Verde
     }
 }

@@ -6,29 +6,40 @@
 console.log("✅ stream.js carregado - Modo OFFLINE");
 
 // ==============================================================================
-// DADOS MOCK APENAS
+// DADOS MOCK APENAS - COM FONTES VARIADAS
 // ==============================================================================
 const mockData = [
-    { termo: "Promptar", origem: "PORTUGAL", status: "Emergente", tendencia: "Explosiva", def: "(Verbo) A arte de saber conversar com máquinas." },
-    { termo: "Alucinar", origem: "Técnica", status: "Recontextualizado", tendencia: "Alta", def: "(Novo sentido) Quando informação é inventada por sistema sintético." },
-    { termo: "Desdigitalizar", origem: "PT/BR", status: "Tendência 2026", tendencia: "Crescente", def: "(Oposição) Desconectar para recuperar processos analógicos." },
-    { termo: "Glow up", origem: "Anglicismo", status: "Estabilizado", tendencia: "Estável", def: "(Estabilizado) Transformação positiva de aparência." },
-    { termo: "Tankar", origem: "Gamer", status: "Viral", tendencia: "Alta", def: "(Verbo) Conseguir aguentar situação difícil." },
-    { termo: "Mudar o chip", origem: "PORTUGAL", status: "Estabilizado", tendencia: "Média", def: "(Idiomatismo) Mudança radical de atitude." },
-    { termo: "Lacrar", origem: "BRASIL", status: "Evolução", tendencia: "Estabilizada", def: "(Evolução) Dar resposta definitiva com autoridade." },
-    { termo: "Biscoitar", origem: "BRASIL", status: "Social", tendencia: "Alta", def: "(Verbo) Procurar validação nas redes sociais." },
-    { termo: "Bué", origem: "ANGOLA", status: "Universal", tendencia: "Estável", def: "(Expansão) Significar muito em português." },
-    { termo: "Cringe", origem: "Global", status: "Geracional", tendencia: "Baixa", def: "(Sentimento) Vergonha alheia." },
-    { termo: "Meme", origem: "GLOBAL", status: "Viral", tendencia: "Alta", def: "(Neologismo) Ideia viral na internet." },
-    { termo: "Trollar", origem: "GLOBAL", status: "Social", tendencia: "Média", def: "(Verbo) Provocar deliberadamente redes." },
-    { termo: "Vibe", origem: "GLOBAL", status: "Social", tendencia: "Alta", def: "(Substantivo) Sensação, clima, energia." },
-    { termo: "Flexar", origem: "GLOBAL", status: "Social", tendencia: "Média", def: "(Verbo) Ostentar de forma exagerada." },
-    { termo: "Ghostar", origem: "GLOBAL", status: "Emergente", tendencia: "Crescente", def: "(Verbo) Desaparecer de repente." },
-    { termo: "Fake", origem: "GLOBAL", status: "Social", tendencia: "Alta", def: "(Adjetivo) Falso, mentiroso." },
-    { termo: "Cancelar", origem: "GLOBAL", status: "Emergente", tendencia: "Alta", def: "(Verbo) Rejeitar publicamente." },
-    { termo: "Shippar", origem: "GLOBAL", status: "Social", tendencia: "Média", def: "(Verbo) Apoiar casal romanticamente." },
-    { termo: "Avatar", origem: "GLOBAL", status: "Emergente", tendencia: "Crescente", def: "(Substantivo) Representação virtual." },
-    { termo: "Plot Twist", origem: "GLOBAL", status: "Social", tendencia: "Média", def: "(Expressão) Reviravolta inesperada." }
+    // Google Trends
+    { termo: "Eleições 2026", origem: "Google Trends", status: "Viral", tendencia: "Explosiva", def: "(Termo em trend) Evento político em tendência. Volume: +500K/dia." },
+    { termo: "Mudanças Climáticas", origem: "Google Trends", status: "Persistente", tendencia: "Alta", def: "(Tema global) Questões ambientais em debate. Volume: +300K/dia." },
+    
+    // X (Twitter)
+    { termo: "Prompt Jailbreak", origem: "X", status: "Emergente", tendencia: "Crescente", def: "(Tech Slang) Técnica para contornar limitações de IA." },
+    { termo: "#EstouAqui", origem: "X", status: "Trending", tendencia: "Alta", def: "(Hashtag) Expressão de presença e apoio nas redes." },
+    { termo: "Ratio'd", origem: "X", status: "Viral", tendencia: "Média", def: "(Gíria) Quando reply recebe mais engajamento que post original." },
+    
+    // Reddit
+    { termo: "AMA Session", origem: "Reddit", status: "Comum", tendencia: "Estável", def: "(Formato) Ask Me Anything - sessão de perguntas e respostas." },
+    { termo: "Nerdflix", origem: "Reddit", status: "Emergente", tendencia: "Crescente", def: "(Comunidade) Plataforma alternativa para entretenimento nerd." },
+    { termo: "IAMA Scientist", origem: "Reddit", status: "Trend", tendencia: "Média", def: "(Comunidade) Profissionais partilham experiências." },
+    
+    // Instagram
+    { termo: "Reels Trends", origem: "Instagram", status: "Viral", tendencia: "Alta", def: "(Formato) Vídeos curtos virais na plataforma." },
+    { termo: "Aesthetic Vibe", origem: "Instagram", status: "Social", tendencia: "Média", def: "(Estilo) Compartilhamento de estilos visuais harmoniosos." },
+    { termo: "Story Time", origem: "Instagram", status: "Comum", tendencia: "Estável", def: "(Narrativa) Compartilhamento de histórias pessoais." },
+    
+    // TikTok
+    { termo: "Corpo Perfeito Challenge", origem: "TikTok", status: "Viral", tendencia: "Explosiva", def: "(Trend) Desafio de dança que envolve movimento específico." },
+    { termo: "Lip Sync Battle", origem: "TikTok", status: "Trend", tendencia: "Alta", def: "(Formato) Sincronização de lábios com músicas." },
+    { termo: "Sound Clone", origem: "TikTok", status: "Emergente", tendencia: "Crescente", def: "(Inovação) Criação de vozes clonadas em áudio." },
+    { termo: "Duet Reaction", origem: "TikTok", status: "Social", tendencia: "Média", def: "(Interação) Reação lado a lado com outro criador." },
+    
+    // Fallback/Geral
+    { termo: "Desdigitalizar", origem: "Fallback", status: "Tendência 2026", tendencia: "Crescente", def: "(Oposição) Desconectar deliberadamente da tecnologia." },
+    { termo: "Bué", origem: "Fallback", status: "Estabilizado", tendencia: "Estável", def: "(Gíria PT) Expressão que significa muito." },
+    { termo: "Cringe", origem: "Fallback", status: "Geracional", tendencia: "Alta", def: "(Sentimento) Vergonha alheia perante algo constrangedor." },
+    { termo: "Ghosting Digital", origem: "Fallback", status: "Social", tendencia: "Alta", def: "(Comportamento) Desaparecimento repentino nas redes." },
+    { termo: "Noção de Privacidade", origem: "Fallback", status: "Conceitual", tendencia: "Crescente", def: "(Direito) Proteção de dados pessoais online." }
 ];
 
 // ==============================================================================
