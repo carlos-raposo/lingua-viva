@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 TRENDS PROXY - Backend com suporte a dados reais
-Google Trends + Bluesky API (Autenticado) + Neologismos em Português
+Google Trends + Bluesky API (Autenticado) + Análise de Neologismos em Português
 """
 
 from flask import Flask, jsonify, request
@@ -42,130 +42,12 @@ def get_bluesky_client():
             logger.info("✅ Autenticação Bluesky bem-sucedida!")
         except Exception as e:
             logger.error(f"❌ Erro ao autenticar no Bluesky: {str(e)}")
-            _bluesky_client = False  # Marcar como falha
+            _bluesky_client = False
     
     return _bluesky_client if _bluesky_client is not False else None
 
 # ==============================================================================
-# DETECÇÃO DE NEOLOGISMOS - ANÁLISE LINGUÍSTICA
-# ==============================================================================
-
-# Palavras comuns em português (blacklist - não contar como neologismos)
-COMMON_WORDS = {
-    'a', 'à', 'ao', 'aos', 'aquela', 'aquelas', 'aquele', 'aqueles', 'aquilo',
-    'as', 'até', 'através', 'cada', 'caso', 'cela', 'com', 'comigo', 'como', 
-    'conseguinte', 'consigo', 'contigo', 'contínua', 'contínuas', 'contínuo', 
-    'contínuos', 'cuja', 'cujas', 'cujo', 'cujos', 'da', 'das', 'de', 'dela', 
-    'delas', 'dele', 'deles', 'demais', 'dentro', 'depois', 'desde', 'dessa', 
-    'dessas', 'desse', 'desses', 'desta', 'deste', 'destes', 'deve', 'devem', 
-    'devendo', 'dever', 'deverá', 'deveria', 'deveriamos', 'deveríamos', 'devero',
-    'deverou', 'devemos', 'devendo', 'dever', 'deverá', 'deveria', 'deveriamos',
-    'devi', 'devida', 'devidas', 'devido', 'devidos', 'devisa', 'deviso', 'devo',
-    'devolvamos', 'devolva', 'devolvam', 'develva', 'devolvendo', 'devolver',
-    'devolvera', 'devolvi', 'devolvida', 'devolvidas', 'devolvido', 'devolvidos',
-    'devolvimento', 'devolvimento', 'devolvimento', 'devolvimento', 'devolvimento',
-    'devolvimentos', 'devulva', 'devulvam', 'devulvi', 'devolvida', 'devolvidas',
-    'devolvido', 'devolvidos', 'devolvimento', 'devolvimentos', 'devolvimento',
-    'di', 'dia', 'dias', 'diante', 'dialogo', 'diálogo', 'diarios', 'diária',
-    'diárias', 'diário', 'diários', 'diárias', 'diárias', 'didatica', 'didática',
-    'didático', 'didáticos', 'didáticas', 'didatica', 'didatico', 'didaticos',
-    'diferenca', 'diferença', 'diferenças', 'diferente', 'diferentes', 'diferenca',
-    'diferenca', 'diferenca', 'diferente', 'diferente', 'diferente', 'diferente',
-    'dificil', 'difícil', 'dificílima', 'dificílimas', 'dificílimo', 'dificílimos',
-    'dificuldade', 'dificuldades', 'difícil', 'difíceis', 'dificuldade', 'dificuldade',
-    'dificuldade', 'dificuldade', 'dificuldade', 'dificuldade', 'dificuldade',
-    'difundir', 'difunda', 'difundam', 'difundais', 'difundais', 'difundas',
-    'difundasses', 'difundava', 'difundavas', 'difundavamos', 'difundavamos',
-    'difundavam', 'difundação', 'difundação', 'difundação', 'difundador',
-    'difundadora', 'difundadoramente', 'difundadores', 'difundadora', 'difundadora',
-    'difundadoras', 'difundadoras', 'difundador', 'difundador', 'difundador',
-    'difundador', 'difundador', 'difundador', 'difundadores', 'difundadores',
-    'difundadores', 'difundadores', 'difundadores', 'difundadores', 'difundadores',
-    'do', 'dos', 'doutor', 'doutora', 'doutoral', 'doutorado', 'doutorados',
-    'doutora', 'doutora', 'doutorado', 'doutorado', 'doutorado', 'doutora',
-    'doutora', 'doutora', 'doutora', 'doutora', 'dra', 'drástica', 'drásticas',
-    'drástico', 'drásticos', 'dra', 'dra', 'dra', 'dra', 'dra', 'dra',
-    'e', 'é', 'ela', 'elas', 'ele', 'eles', 'eleição', 'eleições', 'eleitor',
-    'eleitora', 'eleitores', 'eleitoras', 'eleitoral', 'eleitorado', 'eleitorado',
-    'eleitorado', 'eleição', 'eleição', 'eleição', 'eleição', 'eleição', 'eleição',
-    'eleição', 'eleição', 'eleição', 'eleição', 'elétrica', 'elétricas', 'elétrico',
-    'eléctrica', 'eléctrico', 'eléctricos', 'eléctrica', 'eléctrica', 'eléctrica',
-    'eléctrica', 'eléctrica', 'eléctrica', 'eléctrica', 'eléctrica', 'eléctrica',
-    'em', 'embaixada', 'embaixadas', 'embaixador', 'embaixadora', 'embaixadores',
-    'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora',
-    'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora',
-    'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora', 'embaixadora',
-    'embargo', 'embargos', 'embargo', 'embargo', 'embargo', 'embargo', 'embargo',
-    'embargo', 'embargo', 'embargo', 'embargo', 'embargo', 'embargo', 'embargo',
-    'embargo', 'embargo', 'embargo', 'embargo', 'embargo', 'embargo', 'embargo',
-    'em', 'embora', 'embrião', 'embriões', 'embrião', 'embrião', 'embrião',
-    'embrião', 'embrião', 'embrião', 'embrião', 'embrião', 'embrião', 'embrião'
-}
-
-def is_interesting_word(word):
-    """Detecta se uma palavra é potencialmente um neologismo"""
-    
-    # Ignorar muito curto ou muito longo
-    if len(word) < 3 or len(word) > 30:
-        return False
-    
-    # Ignorar palavras comuns
-    if word.lower() in COMMON_WORDS:
-        return False
-    
-    # Ignorar URLs e menciones
-    if word.startswith(('@', 'http', 'www', '.')):
-        return False
-    
-    # Ignorar números puros
-    if word.isdigit():
-        return False
-    
-    # Ignorar apenas pontuação
-    if not any(c.isalpha() for c in word):
-        return False
-    
-    # HEURÍSTICA 1: CamelCase criativo (ex: DesDigitalizar, PromptAI)
-    if re.search(r'[a-z][A-Z]', word):  # camelCase
-        return True
-    
-    # HEURÍSTICA 2: Múltiplas maiúsculas no meio (ex: AI, ML)
-    if sum(1 for c in word if c.isupper()) >= 2:
-        return True
-    
-    # HEURÍSTICA 3: Terminações criativas de gíria portuguesa
-    # -izar, -ção, -ismo, -ista, -ada, -ada
-    suffixes_slang = ['izar', 'ção', 'ismo', 'ista', 'ada', 'ado', 'ante', 'ência']
-    if any(word.lower().endswith(s) for s in suffixes_slang):
-        # Se termina em sufixo comum mas palavra é rara = neologismo
-        return True
-    
-    # HEURÍSTICA 4: Compostos com traço ou underscore
-    if '-' in word or '_' in word:
-        return True
-    
-    # HEURÍSTICA 5: Padrão de gíria: reduções criativas
-    # ex: "bué", "tá", "vcs"
-    if len(word) <= 4 and not word.lower() in {'que', 'ser', 'ter', 'nem', 'dos', 'das', 'uma', 'um'}:
-        if any(c.lower() in 'aeiou' for c in word):  # tem vogal
-            return True
-    
-    return False
-
-def extract_neologismos_from_text(text):
-    """Extrai potenciais neologismos de um texto"""
-    # Remover URLs e mencões
-    text_clean = re.sub(r'http\S+|www\S+|@\w+', '', text)
-    
-    # Extrair palavras (manter maiúsculas para CamelCase)
-    words = re.findall(r'\b[a-záéíóúâêãõçA-Z][a-záéíóúâêãõçA-Z]*\b', text_clean)
-    
-    neologismos = set()
-    for word in words:
-        if is_interesting_word(word):
-            neologismos.add(word)
-    
-    return neologismos
+# DADOS MOCKADOS PARA FALLBACK
 # ==============================================================================
 FALLBACK_TRENDS = {
     'PT': [
@@ -194,6 +76,63 @@ NEOLOGISMOS_MOCK = [
 ]
 
 # ==============================================================================
+# DETECÇÃO DE NEOLOGISMOS - ANÁLISE LINGUÍSTICA
+# ==============================================================================
+
+COMMON_WORDS = {'a', 'à', 'ao', 'aos', 'as', 'até', 'através', 'cada', 'com', 'como', 'consigo',
+    'cuja', 'cujo', 'da', 'das', 'de', 'dela', 'dele', 'demais', 'dentro', 'depois',
+    'desde', 'dessa', 'desse', 'desta', 'deste', 'deve', 'devem', 'dever', 'deveria',
+    'devo', 'dia', 'dias', 'diálogo', 'diária', 'diário', 'diferença', 'diferente',
+    'difícil', 'dificuldade', 'do', 'dos', 'doutor', 'doutora', 'e', 'é', 'ela',
+    'elas', 'ele', 'eles', 'eleição', 'eleitor', 'em', 'embora', 'emergência',
+    'emissão', 'emoção', 'empresa', 'emprego', 'encima', 'encontra', 'encontro',
+    'endereço', 'enquanto', 'ens', 'ensaio', 'ensinança', 'ensino', 'ensoberbecida',
+    'ensoberbecido', 'ensoberbecedor', 'ensoberbecedora', 'ensoberbecente', 'ensoberbecentemente',
+    'ensoberbecentemente', 'ensoberbecenza', 'ensoberbecenza', 'ensoberbecência', 'ensoberbecência'}
+
+def is_neologismo(word):
+    """Detecta se uma palavra é potencialmente um neologismo português"""
+    
+    if len(word) < 3 or len(word) > 30:
+        return False
+    
+    if word.lower() in COMMON_WORDS:
+        return False
+    
+    if word.startswith(('@', 'http', 'www', '.')):
+        return False
+    
+    if word.isdigit():
+        return False
+    
+    if not any(c.isalpha() for c in word):
+        return False
+    
+    # CamelCase (DesDigitalizar, PromptAI)
+    if re.search(r'[a-z][A-Z]', word):
+        return True
+    
+    # Múltiplas maiúsculas
+    if sum(1 for c in word if c.isupper()) >= 2:
+        return True
+    
+    # Terminações típicas de neologismos
+    if any(word.lower().endswith(s) for s in ['izar', 'ção', 'ismo', 'ista', 'ada', 'ado', 'ante']):
+        return True
+    
+    # Gírias curtas
+    if len(word) <= 4 and any(c.lower() in 'aeiou' for c in word):
+        return True
+    
+    return False
+
+def extract_neologismos(text):
+    """Extrai neologismos de um texto"""
+    text_clean = re.sub(r'http\S+|www\S+|@\w+', '', text)
+    words = re.findall(r'\b[a-záéíóúâêãõçA-Z][a-záéíóúâêãõçA-Z]*\b', text_clean)
+    return {w for w in words if is_neologismo(w)}
+
+# ==============================================================================
 # ENDPOINTS
 # ==============================================================================
 
@@ -202,7 +141,7 @@ def index():
     """Info do servidor"""
     return jsonify({
         'service': 'Trends Proxy',
-        'version': '2.1',
+        'version': '2.2',
         'bluesky_authenticated': get_bluesky_client() is not None,
         'endpoints': {
             'GET /trends?geo=PT': 'Portugal',
@@ -219,7 +158,6 @@ def get_trends():
     geo = request.args.get('geo', 'PT').upper()
     logger.info(f"📡 Request: /trends?geo={geo}")
     
-    # Retornar mock data (Google Trends bloqueado em Render)
     trends = FALLBACK_TRENDS.get(geo, [])
     
     if trends and len(trends) > 0:
@@ -245,11 +183,7 @@ def get_trends():
             'data': formatted_trends
         })
     else:
-        return jsonify({
-            'success': False,
-            'error': 'Sem dados',
-            'geo': geo
-        }), 503
+        return jsonify({'success': False, 'error': 'Sem dados', 'geo': geo}), 503
 
 @app.route('/bluesky', methods=['GET'])
 def get_bluesky():
@@ -257,7 +191,36 @@ def get_bluesky():
     try:
         logger.info("🔷 Fetching Bluesky Trending...")
         
-        # Usar getTrends endpoint público (não requer auth)
+        client = get_bluesky_client()
+        if client:
+            try:
+                trends = client.app.bsky.unspecced.get_trends()
+                formatted_trends = [
+                    {
+                        'termo': t.query.lstrip('#'),
+                        'traffic': '+Unknown',
+                        'origem': 'Bluesky',
+                        'source': 'bluesky',
+                        'real': True,
+                        'description': f'Tópico trending no Bluesky',
+                        'pubDate': datetime.now().isoformat(),
+                        'status': 'Trending Agora',
+                        'tendencia': 'Explosiva'
+                    }
+                    for t in trends.trends[:15]
+                ]
+                
+                return jsonify({
+                    'success': True,
+                    'count': len(formatted_trends),
+                    'source': 'bluesky',
+                    'timestamp': datetime.now().isoformat(),
+                    'data': formatted_trends
+                })
+            except Exception as e:
+                logger.warning(f"Erro ao chamar getTrends: {str(e)}")
+        
+        # Fallback: usar público
         response = requests.get(
             'https://public.api.bsky.app/xrpc/app.bsky.unspecced.getTrends',
             headers={'Accept': 'application/json'},
@@ -292,107 +255,83 @@ def get_bluesky():
             })
         else:
             logger.warning(f"Bluesky retornou {response.status_code}")
-            return jsonify({
-                'success': False,
-                'error': f'Bluesky retornou {response.status_code}'
-            }), response.status_code
+            return jsonify({'success': False, 'error': f'Bluesky retornou {response.status_code}'}), response.status_code
     
     except Exception as e:
         logger.error(f"❌ Erro ao buscar Bluesky: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/bluesky/neologismos', methods=['GET'])
 def get_neologismos():
-    """GET /bluesky/neologismos - Detecta neologismos em posts portugueses (AUTENTICADO)"""
+    """GET /bluesky/neologismos - Detecta neologismos em posts portugueses"""
     try:
-        logger.info("📚 Analisando posts em português para detectar neologismos...")
+        logger.info("📚 Detectando neologismos em português...")
         
         client = get_bluesky_client()
         if not client:
-            logger.warning("❌ Cliente Bluesky não autenticado, usando fallback...")
+            logger.warning("❌ Cliente não autenticado, usando fallback...")
             return jsonify({
                 'success': True,
                 'count': len(NEOLOGISMOS_MOCK),
                 'source': 'fallback',
                 'idioma': 'português',
-                'warning': 'usando dados mockados (cliente não autenticado)',
+                'warning': 'usando mock (cliente não autenticado)',
                 'timestamp': datetime.now().isoformat(),
                 'data': NEOLOGISMOS_MOCK
             })
         
-        neologismos_encontrados = {}  # Dict para evitar duplicatas: {palavra: contexto}
+        neologismos_encontrados = {}
         posts_analisados = 0
         
-        # Estratégia: buscar posts com termos genéricos em português
-        search_queries = [
-            'lang:pt',  # Todos os posts em português
-        ]
-        
-        for query in search_queries:
-            try:
-                logger.info(f"🔍 Buscando posts: '{query}'...")
-                
-                # Buscar posts em português
-                results = client.app.bsky.feed.search_posts(
-                    query=query,
-                    limit=100,  # Aumentar para mais análise
-                    sort='latest'
-                )
-                
-                if results and results.posts:
-                    for post in results.posts:
-                        try:
-                            posts_analisados += 1
-                            
-                            # Extrair texto do post
-                            text = post.record.text if hasattr(post.record, 'text') else ''
-                            
-                            if not text:
-                                continue
-                            
-                            # Analisar texto para detectar neologismos
-                            found_neologismos = extract_neologismos_from_text(text)
-                            
-                            for neologismo in found_neologismos:
-                                if neologismo not in neologismos_encontrados:
-                                    neologismos_encontrados[neologismo] = {
-                                        'termo': neologismo,
-                                        'context': text[:140],  # Primeiro 140 caracteres como contexto
-                                        'fonte': 'Bluesky',
-                                        'idioma': 'PT',
-                                        'pubDate': datetime.now().isoformat(),
-                                        'source': 'bluesky',
-                                        'tipo': 'neologismo_detectado'
-                                    }
-                        
-                        except Exception as e:
-                            logger.debug(f"Erro ao analisar post: {str(e)}")
-                            continue
-                
-            except Exception as e:
-                logger.warning(f"Erro ao buscar '{query}': {str(e)}")
-                continue
-        
-        logger.info(f"📊 Posts analisados: {posts_analisados}, Neologismos detectados: {len(neologismos_encontrados)}")
-        
-        # Se encontrou neologismos, retornar; senão usar mock
-        if neologismos_encontrados:
-            # Limitar a 20 melhores neologismos (ordenar por tamanho/relevância)
-            resultado = sorted(
-                list(neologismos_encontrados.values()),
-                key=lambda x: len(x['termo']),  # Preferir palavras médias
-                reverse=False
-            )[:20]
+        try:
+            logger.info("🔍 Buscando posts em português...")
+            results = client.app.bsky.feed.search_posts(
+                query='lang:pt',
+                limit=100,
+                sort='latest'
+            )
             
-            logger.info(f"✅ Encontrados {len(resultado)} neologismos únicos do Bluesky!")
+            if results and results.posts:
+                for post in results.posts:
+                    try:
+                        posts_analisados += 1
+                        text = post.record.text if hasattr(post.record, 'text') else ''
+                        
+                        if not text:
+                            continue
+                        
+                        found_neologismos = extract_neologismos(text)
+                        
+                        for neologismo in found_neologismos:
+                            if neologismo not in neologismos_encontrados:
+                                neologismos_encontrados[neologismo] = {
+                                    'termo': neologismo,
+                                    'context': text[:140],
+                                    'fonte': 'Bluesky',
+                                    'idioma': 'PT',
+                                    'pubDate': datetime.now().isoformat(),
+                                    'source': 'bluesky',
+                                    'tipo': 'neologismo_detectado'
+                                }
+                    
+                    except Exception as e:
+                        logger.debug(f"Erro ao analisar: {str(e)}")
+                        continue
+        
+        except Exception as e:
+            logger.warning(f"Erro na busca: {str(e)}")
+        
+        logger.info(f"📊 Posts: {posts_analisados}, Neologismos: {len(neologismos_encontrados)}")
+        
+        if neologismos_encontrados:
+            resultado = sorted(list(neologismos_encontrados.values()), 
+                             key=lambda x: len(x['termo']))[:20]
             source = 'bluesky'
+            logger.info(f"✅ {len(resultado)} neologismos encontrados!")
         else:
-            logger.info("⚠️  Nenhum neologismo detectado, usando fallback...")
             resultado = NEOLOGISMOS_MOCK
             source = 'fallback'
+            logger.info("⚠️ Nenhum neologismo, usando fallback...")
         
         return jsonify({
             'success': True,
@@ -405,13 +344,13 @@ def get_neologismos():
         })
     
     except Exception as e:
-        logger.error(f"❌ Erro ao detectar neologismos: {str(e)}")
+        logger.error(f"❌ Erro: {str(e)}")
         return jsonify({
             'success': True,
             'count': len(NEOLOGISMOS_MOCK),
             'source': 'fallback',
             'idioma': 'português',
-            'warning': f'Erro na análise, usando mock: {str(e)}',
+            'warning': f'Erro: {str(e)}',
             'timestamp': datetime.now().isoformat(),
             'data': NEOLOGISMOS_MOCK
         })
