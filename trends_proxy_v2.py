@@ -195,28 +195,43 @@ def get_bluesky():
         if client:
             try:
                 trends = client.app.bsky.unspecced.get_trends()
-                formatted_trends = [
-                    {
-                        'termo': t.query.lstrip('#'),
-                        'traffic': '+Unknown',
-                        'origem': 'Bluesky',
-                        'source': 'bluesky',
-                        'real': True,
-                        'description': f'Tópico trending no Bluesky',
-                        'pubDate': datetime.now().isoformat(),
-                        'status': 'Trending Agora',
-                        'tendencia': 'Explosiva'
-                    }
-                    for t in trends.trends[:15]
-                ]
+                formatted_trends = []
                 
-                return jsonify({
-                    'success': True,
-                    'count': len(formatted_trends),
-                    'source': 'bluesky',
-                    'timestamp': datetime.now().isoformat(),
-                    'data': formatted_trends
-                })
+                # Safely parse trends - pode ter diferentes estruturas
+                if trends and hasattr(trends, 'trends'):
+                    for t in trends.trends[:15]:
+                        # Tentar extrair 'query' de forma segura
+                        termo = None
+                        if hasattr(t, 'query') and t.query:
+                            termo = str(t.query).lstrip('#')
+                        elif hasattr(t, 'name') and t.name:
+                            termo = str(t.name).lstrip('#')
+                        
+                        if termo and termo.strip():  # Só adicionar se não vazio
+                            formatted_trends.append({
+                                'termo': termo,
+                                'traffic': '+Unknown',
+                                'origem': 'Bluesky',
+                                'source': 'bluesky',
+                                'real': True,
+                                'description': f'Tópico trending no Bluesky',
+                                'pubDate': datetime.now().isoformat(),
+                                'status': 'Trending Agora',
+                                'tendencia': 'Explosiva'
+                            })
+                
+                if formatted_trends:
+                    logger.info(f"✅ Bluesky trending: {len(formatted_trends)} termos")
+                    return jsonify({
+                        'success': True,
+                        'count': len(formatted_trends),
+                        'source': 'bluesky',
+                        'timestamp': datetime.now().isoformat(),
+                        'data': formatted_trends
+                    })
+                else:
+                    logger.warning("❌ Trends vazios, a usar fallback...")
+            
             except Exception as e:
                 logger.warning(f"Erro ao chamar getTrends: {str(e)}")
         
@@ -284,42 +299,63 @@ def get_neologismos():
         posts_analisados = 0
         
         try:
-            logger.info("🔍 Buscando posts em português...")
-            results = client.app.bsky.feed.search_posts(
-                query='lang:pt',
-                limit=100,
-                sort='latest'
-            )
+            logger.info("🔍 Buscando posts para detectar neologismos...")
             
-            if results and results.posts:
-                for post in results.posts:
-                    try:
-                        posts_analisados += 1
-                        text = post.record.text if hasattr(post.record, 'text') else ''
-                        
-                        if not text:
-                            continue
-                        
-                        found_neologismos = extract_neologismos(text)
-                        
-                        for neologismo in found_neologismos:
-                            if neologismo not in neologismos_encontrados:
-                                neologismos_encontrados[neologismo] = {
-                                    'termo': neologismo,
-                                    'context': text[:140],
-                                    'fonte': 'Bluesky',
-                                    'idioma': 'PT',
-                                    'pubDate': datetime.now().isoformat(),
-                                    'source': 'bluesky',
-                                    'tipo': 'neologismo_detectado'
-                                }
+            # Tenta várias queries para encontrar posts em português
+            queries = ['é', 'de', 'português', 'brasil', 'portugal', 'gíria']
+            
+            for query_term in queries:
+                try:
+                    logger.info(f"  - Buscando com query: '{query_term}'...")
+                    results = client.app.bsky.feed.search_posts(
+                        query=query_term,
+                        limit=50,
+                        sort='latest'
+                    )
                     
-                    except Exception as e:
-                        logger.debug(f"Erro ao analisar: {str(e)}")
-                        continue
+                    if results and results.posts:
+                        for post in results.posts:
+                            try:
+                                posts_analisados += 1
+                                text = post.record.text if hasattr(post.record, 'text') else ''
+                                
+                                if not text or len(text) < 10:
+                                    continue
+                                
+                                found_neologismos = extract_neologismos(text)
+                                
+                                for neologismo in found_neologismos:
+                                    if neologismo not in neologismos_encontrados:
+                                        neologismos_encontrados[neologismo] = {
+                                            'termo': neologismo,
+                                            'context': text[:140],
+                                            'fonte': 'Bluesky',
+                                            'idioma': 'PT',
+                                            'pubDate': datetime.now().isoformat(),
+                                            'source': 'bluesky',
+                                            'tipo': 'neologismo_detectado'
+                                        }
+                                
+                                # Parar quando temos suficientes neologismos
+                                if len(neologismos_encontrados) >= 20:
+                                    raise StopIteration()
+                            
+                            except StopIteration:
+                                break
+                            except Exception as e:
+                                logger.debug(f"Erro ao analisar post: {str(e)}")
+                                continue
+                    
+                    # Se já encontramos bastantes, parar
+                    if len(neologismos_encontrados) >= 20:
+                        break
+                
+                except Exception as e:
+                    logger.debug(f"Erro na busca '{query_term}': {str(e)}")
+                    continue
         
         except Exception as e:
-            logger.warning(f"Erro na busca: {str(e)}")
+            logger.warning(f"Erro geral na busca: {str(e)}")
         
         logger.info(f"📊 Posts: {posts_analisados}, Neologismos: {len(neologismos_encontrados)}")
         
