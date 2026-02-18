@@ -6,12 +6,15 @@
 console.log("✅ stream.js carregado - iniciando carregamento de dados...");
 
 // ==============================================================================
-// CONFIGURAÇÃO DE BACKEND
+// CONFIGURAÇÃO DE BACKEND (Detectada automaticamente por config.js)
 // ==============================================================================
-// Para desenvolvimento local: http://localhost:5000
-// Para produção (Render): https://sua-app-render.com (será actualizado durante deploy)
-const BACKEND_URL = 'https://lingua-viva.onrender.com';  // Render Production URL
-console.log(`🔌 Backend URL configurado: ${BACKEND_URL}`);
+// Use: window.BACKEND_URL (definido em config.js)
+// Detecta automaticamente: localhost → http://localhost:5000
+//                         produção → https://lingua-viva.onrender.com
+if (!window.BACKEND_URL) {
+    console.error("❌ config.js não foi carregado! Por favor, carregue config.js ANTES de stream.js");
+}
+const BACKEND_URL = window.BACKEND_URL;
 
 // ==============================================================================
 // DADOS MOCKADOS (FALLBACK)

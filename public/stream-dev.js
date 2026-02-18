@@ -8,10 +8,16 @@ console.log("🔧 stream-dev.js carregado - MODO DESENVOLVIMENTO");
 console.warn("⚠️  Você está em MODO DESENVOLVIMENTO - Tentando carregar dados reais de APIs");
 
 // ==============================================================================
-// CONFIGURAÇÃO DE BACKEND
+// CONFIGURAÇÃO DE BACKEND (Detectada automaticamente por config.js)
 // ==============================================================================
-const BACKEND_URL = 'https://lingua-viva.onrender.com';  // Render Production URL
-console.log(`🔌 Backend URL: ${BACKEND_URL}`);
+// Use: window.BACKEND_URL (definido em config.js)
+// Detecta automaticamente: localhost → http://localhost:5000
+//                         produção → https://lingua-viva.onrender.com
+if (!window.BACKEND_URL) {
+    console.error("❌ config.js não foi carregado! Por favor, carregue config.js ANTES de stream-dev.js");
+}
+const BACKEND_URL = window.BACKEND_URL;
+console.log(`🔧 [DEV] Backend URL: ${BACKEND_URL}`);
 
 // ==============================================================================
 // DADOS MOCKADOS (FALLBACK FINAL)
